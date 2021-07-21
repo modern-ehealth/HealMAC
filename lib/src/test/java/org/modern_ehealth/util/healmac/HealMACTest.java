@@ -1,6 +1,7 @@
 package org.modern_ehealth.util.healmac;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -38,6 +39,53 @@ class HealMACTest {
     void testGenerateCode_throwsForEmptyMessage() {
         var exception = assertThrows(HealMACException.class, () -> {
                 HealMAC.generateCode(TEST_KEY, new byte[]{});
+            });
+
+        assertTrue(exception.getMessage().matches("empty message"));
+    }
+
+
+    // validateCode
+
+    @Test
+    void testValidateCode_returnsTrueForValidCode() {
+        var code = new byte[]{
+            (byte)0x10, (byte)0x01, (byte)0x39, (byte)0xdc,
+            (byte)0xf9, (byte)0x29, (byte)0x0b, (byte)0x23,
+            (byte)0xeb, (byte)0xe2, (byte)0x76, (byte)0xed,
+            (byte)0x38, (byte)0x31, (byte)0x2f, (byte)0xe6
+        };
+
+        var result = HealMAC.validateCode(TEST_KEY, TEST_MESSAGE, code);
+        assertTrue(result);
+    }
+
+    @Test
+    void testValidateCode_returnsFalseForInvalidCode() {
+        var code = new byte[]{
+            (byte)0x00, (byte)0x01, (byte)0x39, (byte)0xdc,
+            (byte)0x09, (byte)0x29, (byte)0x0b, (byte)0x23,
+            (byte)0x0b, (byte)0xe2, (byte)0x76, (byte)0xed,
+            (byte)0x08, (byte)0x31, (byte)0x2f, (byte)0xe6
+        };
+
+        var result = HealMAC.validateCode(TEST_KEY, TEST_MESSAGE, code);
+        assertFalse(result);
+    }
+
+    @Test
+    void testValidateCode_throwsForEmptyKey() {
+        var exception = assertThrows(HealMACException.class, () -> {
+                HealMAC.validateCode(new byte[]{}, TEST_MESSAGE, new byte[]{});
+            });
+
+        assertTrue(exception.getMessage().matches("empty key"));
+    }
+
+    @Test
+    void testValidateCode_throwsForEmptyMessage() {
+        var exception = assertThrows(HealMACException.class, () -> {
+                HealMAC.validateCode(TEST_KEY, new byte[]{}, new byte[]{});
             });
 
         assertTrue(exception.getMessage().matches("empty message"));

@@ -24,5 +24,23 @@ public class HealMAC {
 
         return hasher.hash().asBytes();
     }
+
+    public static boolean validateCode(byte[] key, byte[] message, byte[] code) {
+        // Calculate the correct code
+        var actualCode = generateCode(key, message);
+
+        // If the lengths are not equal, code is not correct
+        if(code.length != actualCode.length) {
+            return false;
+        }
+
+        // If any byte doesn't match, code is not correct
+        for(var i = 0; i < code.length; i++) {
+            if(code[i] != actualCode[i]) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
