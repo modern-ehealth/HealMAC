@@ -21,3 +21,9 @@ tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
 }
+
+task generateDocs(type: Javadoc) {
+    source = sourceSets.main.allJava
+    destinationDir = rootProject.file("docs")
+    classpath = project.sourceSets.main.compileClasspath
+}
