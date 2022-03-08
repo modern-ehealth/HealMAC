@@ -1,5 +1,7 @@
 package org.modern_ehealth.util.healmac;
 
+import java.util.Arrays;
+
 import com.google.common.hash.Hashing;
 
 public class HealMAC {
@@ -15,14 +17,19 @@ public class HealMAC {
             throw new HealMACException("empty message");
         }
 
-        var hf = Hashing.murmur3_128(MURMUR3_SEED);
+        // Use a hash function with a short output because
+        // it's hard for people to remember long codes
+        var hf = Hashing.murmur3_32_fixed(MURMUR3_SEED);
         var hasher = hf.newHasher();
 
         // TODO: Check if this matches the HMAC RFC???
         hasher.putBytes(key);
         hasher.putBytes(message);
 
-        return hasher.hash().asBytes();
+        var codeBytes = hasher.hash().asBytes();
+
+        // Pad to ensure backwards compatibility
+        return Arrays.copyOf(codeBytes, 16);
     }
 
     public static boolean validateCode(byte[] key, byte[] message, byte[] code) {
@@ -36,6 +43,11 @@ public class HealMAC {
 
         // If any byte doesn't match, code is not correct
         for(var i = 0; i < code.length; i++) {
+            // If we reach the padding, stop the loop
+            if(code[i] == 0) {
+                break;
+            }
+
             if(code[i] != actualCode[i]) {
                 return false;
             }
