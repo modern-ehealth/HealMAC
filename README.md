@@ -21,3 +21,11 @@ API documentation can be found in the `docs/` directory within the project repo.
 - After receiving feedback from initial users of this library, we've determined that the 128-bit Murmur3 hash function produces output that is too long when represented in Base36.
 
   The hash function has been updated to Murmur3's 32-bit variant. In order to ensure backwards compatibility for existing users, the API still outputs and receives 128-bit codes, however. Any code generated from the new version of the library will be padded to 16 bytes.
+
+#### 1.0.1
+
+- Added API documentation to the repository.
+
+#### 1.0.0
+
+- Initial release of HealMAC library with support for generating and validating Message Authentication Codes.
