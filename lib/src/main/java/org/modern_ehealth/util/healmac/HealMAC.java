@@ -33,8 +33,13 @@ public class HealMAC {
     /**
      * Generates a Message Authentication Code (MAC) for the given message,
      * using the given secret key. This MAC is based on the Murmur3 hash
-     * function with 128-bit output and is suitable for being read or typed
+     * function with 32-bit output and is suitable for being read or typed
      * by a human, provided that it is encoded with something like Base36.
+     *
+     * <p>Note: To make HealMAC codes friendlier for humans to work with,
+     * the generated codes are now only 32 bits. For backwards compatibility
+     * the output of this function is still 128 bits however, so please
+     * disregard any portion beyond the first 4 bytes.
      *
      * @param key The secret key to authenticate the MAC (recommended at
      * least 32 bytes)
