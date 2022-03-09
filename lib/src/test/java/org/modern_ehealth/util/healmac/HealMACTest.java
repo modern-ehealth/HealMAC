@@ -17,10 +17,10 @@ class HealMACTest {
 
         // Calculated from python mmh3
         var expected = new byte[]{
-            (byte)0x10, (byte)0x01, (byte)0x39, (byte)0xdc,
-            (byte)0xf9, (byte)0x29, (byte)0x0b, (byte)0x23,
-            (byte)0xeb, (byte)0xe2, (byte)0x76, (byte)0xed,
-            (byte)0x38, (byte)0x31, (byte)0x2f, (byte)0xe6
+            (byte)0xe0, (byte)0x99, (byte)0xe0, (byte)0x4e,
+            (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
+            (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
+            (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00
         };
 
         assertArrayEquals(expected, hmac);
@@ -50,10 +50,10 @@ class HealMACTest {
     @Test
     void testValidateCode_returnsTrueForValidCode() {
         var code = new byte[]{
-            (byte)0x10, (byte)0x01, (byte)0x39, (byte)0xdc,
-            (byte)0xf9, (byte)0x29, (byte)0x0b, (byte)0x23,
-            (byte)0xeb, (byte)0xe2, (byte)0x76, (byte)0xed,
-            (byte)0x38, (byte)0x31, (byte)0x2f, (byte)0xe6
+            (byte)0xe0, (byte)0x99, (byte)0xe0, (byte)0x4e,
+            (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
+            (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
+            (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00
         };
 
         var result = HealMAC.validateCode(TEST_KEY, TEST_MESSAGE, code);
@@ -63,14 +63,27 @@ class HealMACTest {
     @Test
     void testValidateCode_returnsFalseForInvalidCode() {
         var code = new byte[]{
-            (byte)0x00, (byte)0x01, (byte)0x39, (byte)0xdc,
-            (byte)0x09, (byte)0x29, (byte)0x0b, (byte)0x23,
-            (byte)0x0b, (byte)0xe2, (byte)0x76, (byte)0xed,
-            (byte)0x08, (byte)0x31, (byte)0x2f, (byte)0xe6
+            (byte)0xff, (byte)0xff, (byte)0xff, (byte)0xff,
+            (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
+            (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
+            (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00
         };
 
         var result = HealMAC.validateCode(TEST_KEY, TEST_MESSAGE, code);
         assertFalse(result);
+    }
+
+    @Test
+    void testValidateCode_ignoresPaddingBytes() {
+        var code = new byte[]{
+            (byte)0xe0, (byte)0x99, (byte)0xe0, (byte)0x4e,
+            (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
+            (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
+            (byte)0x00, (byte)0x00, (byte)0x00, (byte)0xff
+        };
+
+        var result = HealMAC.validateCode(TEST_KEY, TEST_MESSAGE, code);
+        assertTrue(result);
     }
 
     @Test
