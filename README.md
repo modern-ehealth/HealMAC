@@ -29,3 +29,7 @@ API documentation can be found in the `docs/` directory within the project repo.
 #### 1.0.0
 
 - Initial release of HealMAC library with support for generating and validating Message Authentication Codes.
+
+### Disclaimer
+
+This library is not suitable for production use and it is NOT recommended to integrate it with your project. If you are looking for a suitable HMAC implementation in Java please consider the [Guava project](https://guava.dev/).
