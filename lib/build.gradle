@@ -1,9 +1,13 @@
 plugins {
     // Apply the java-library plugin for API and implementation separation.
     id 'java-library'
+    id 'maven-publish'
 }
 
-version = '1.1.0'
+group = 'org.modern-ehealth.util'
+version = '1.1.1'
+
+archivesBaseName = 'healmac'
 
 repositories {
     // Use Maven Central for resolving dependencies.
@@ -26,4 +30,13 @@ task generateDocs(type: Javadoc) {
     source = sourceSets.main.allJava
     destinationDir = rootProject.file("docs")
     classpath = project.sourceSets.main.compileClasspath
+}
+
+publishing {
+    publications {
+        HealMac(MavenPublication) {
+            from components.java
+            artifactId = 'healmac'
+        }
+    }
 }
