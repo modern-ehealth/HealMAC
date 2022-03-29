@@ -3,7 +3,10 @@ plugins {
     id 'java-library'
 }
 
+group = 'org.modern-ehealth.util'
 version = '1.1.0'
+
+archivesBaseName = 'healmac'
 
 repositories {
     // Use Maven Central for resolving dependencies.
