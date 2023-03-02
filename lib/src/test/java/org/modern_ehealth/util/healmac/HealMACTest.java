@@ -1,6 +1,6 @@
 package org.modern_ehealth.util.healmac;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -16,14 +16,9 @@ class HealMACTest {
         var hmac = HealMAC.generateCode(TEST_KEY, TEST_MESSAGE);
 
         // Calculated from python mmh3
-        var expected = new byte[]{
-            (byte)0xe0, (byte)0x99, (byte)0xe0, (byte)0x4e,
-            (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
-            (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
-            (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00
-        };
+        var expected = 1323342304;
 
-        assertArrayEquals(expected, hmac);
+        assertEquals(expected, hmac);
     }
 
     @Test
@@ -49,12 +44,7 @@ class HealMACTest {
 
     @Test
     void testValidateCode_returnsTrueForValidCode() {
-        var code = new byte[]{
-            (byte)0xe0, (byte)0x99, (byte)0xe0, (byte)0x4e,
-            (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
-            (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
-            (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00
-        };
+        var code = 1323342304;
 
         var result = HealMAC.validateCode(TEST_KEY, TEST_MESSAGE, code);
         assertTrue(result);
@@ -62,34 +52,24 @@ class HealMACTest {
 
     @Test
     void testValidateCode_returnsFalseForInvalidCode() {
-        var code = new byte[]{
-            (byte)0xff, (byte)0xff, (byte)0xff, (byte)0xff,
-            (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
-            (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
-            (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00
-        };
+        var code = 1568202873;
 
         var result = HealMAC.validateCode(TEST_KEY, TEST_MESSAGE, code);
         assertFalse(result);
     }
 
     @Test
-    void testValidateCode_ignoresPaddingBytes() {
-        var code = new byte[]{
-            (byte)0xe0, (byte)0x99, (byte)0xe0, (byte)0x4e,
-            (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
-            (byte)0x00, (byte)0x00, (byte)0x00, (byte)0x00,
-            (byte)0x00, (byte)0x00, (byte)0x00, (byte)0xff
-        };
+    void testValidateCode_returnsFalseForZeroCode() {
+        var code = 0;
 
         var result = HealMAC.validateCode(TEST_KEY, TEST_MESSAGE, code);
-        assertTrue(result);
+        assertFalse(result);
     }
 
     @Test
     void testValidateCode_throwsForEmptyKey() {
         var exception = assertThrows(HealMACException.class, () -> {
-                HealMAC.validateCode(new byte[]{}, TEST_MESSAGE, new byte[]{});
+                HealMAC.validateCode(new byte[]{}, TEST_MESSAGE, 0);
             });
 
         assertTrue(exception.getMessage().matches("empty key"));
@@ -98,7 +78,7 @@ class HealMACTest {
     @Test
     void testValidateCode_throwsForEmptyMessage() {
         var exception = assertThrows(HealMACException.class, () -> {
-                HealMAC.validateCode(TEST_KEY, new byte[]{}, new byte[]{});
+                HealMAC.validateCode(TEST_KEY, new byte[]{}, 0);
             });
 
         assertTrue(exception.getMessage().matches("empty message"));

@@ -50,7 +50,7 @@ public class HealMAC {
      * @throws HealMACException if {@code key.length == 0} or
      * {@code message.length == 0}
      */
-    public static byte[] generateCode(byte[] key, byte[] message) {
+    public static int generateCode(byte[] key, byte[] message) {
         if(key.length == 0) {
             throw new HealMACException("empty key");
         }
@@ -68,10 +68,8 @@ public class HealMAC {
         hasher.putBytes(key);
         hasher.putBytes(message);
 
-        var codeBytes = hasher.hash().asBytes();
-
-        // Pad to ensure backwards compatibility
-        return Arrays.copyOf(codeBytes, 16);
+        // The 32-bit code can fit in an integer
+        return hasher.hash().asInt();
     }
 
     /**
@@ -90,27 +88,11 @@ public class HealMAC {
      * @throws HealMACException if {@code key.length == 0} or
      * {@code message.length == 0}
      */
-    public static boolean validateCode(byte[] key, byte[] message, byte[] code) {
+    public static boolean validateCode(byte[] key, byte[] message, int code) {
         // Calculate the correct code
         var actualCode = generateCode(key, message);
 
-        // If the lengths are not equal, code is not correct
-        if(code.length != actualCode.length) {
-            return false;
-        }
-
-        // If any byte doesn't match, code is not correct
-        for(var i = 0; i < code.length; i++) {
-            // If we reach the padding, stop the loop
-            if(code[i] == 0) {
-                break;
-            }
-
-            if(code[i] != actualCode[i]) {
-                return false;
-            }
-        }
-
-        return true;
+        // Simple integer comparison to validate the code
+        return code == actualCode;
     }
 }

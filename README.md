@@ -16,6 +16,12 @@ API documentation can be found in the `docs/` directory within the project repo.
 
 ## Changelog
 
+### 2.0.0
+
+- This is an urgent security fix for users of HealMAC version 1.1.0!
+- With the new 32-bit codes it's necessary for the API to return an integer rather than the padded byte array. This is a backwards-incompatible change, but it's recommended for everyone to upgrade as soon as possible to avoid possible security issues.
+- Our thanks for the bug report go to a security researcher who we are choosing to keep anonymous.
+
 ### 1.1.0
 
 - After receiving feedback from initial users of this library, we've determined that the 128-bit Murmur3 hash function produces output that is too long when represented in Base36.
